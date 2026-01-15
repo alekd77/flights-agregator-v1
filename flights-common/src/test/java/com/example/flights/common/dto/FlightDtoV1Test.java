@@ -19,7 +19,7 @@ class FlightDtoV1Test {
                 .deptDateTime(LocalDateTime.of(2026, 1, 15, 10, 30))
                 .price(new BigDecimal("299.99"))
                 .currency("USD")
-                .source("test-source")
+                .type(FlightType.REGULAR)
                 .build();
 
         // Then
@@ -30,7 +30,7 @@ class FlightDtoV1Test {
         assertEquals(LocalDateTime.of(2026, 1, 15, 10, 30), flight.getDeptDateTime());
         assertEquals(new BigDecimal("299.99"), flight.getPrice());
         assertEquals("USD", flight.getCurrency());
-        assertEquals("test-source", flight.getSource());
+        assertEquals(FlightType.REGULAR, flight.getType());
     }
 
     @Test
@@ -43,7 +43,7 @@ class FlightDtoV1Test {
                         .deptDateTime(LocalDateTime.of(2026, 1, 15, 10, 30))
                         .price(new BigDecimal("299.99"))
                         .currency("USD")
-                        .source("test-source")
+                        .type(FlightType.REGULAR)
                         .build()
         );
         assertEquals("id cannot be null", exception.getMessage());
@@ -59,7 +59,7 @@ class FlightDtoV1Test {
                         .deptDateTime(LocalDateTime.of(2026, 1, 15, 10, 30))
                         .price(new BigDecimal("299.99"))
                         .currency("USD")
-                        .source("test-source")
+                        .type(FlightType.REGULAR)
                         .build()
         );
         assertEquals("deptCode cannot be null", exception.getMessage());
@@ -75,7 +75,7 @@ class FlightDtoV1Test {
                         .deptDateTime(LocalDateTime.of(2026, 1, 15, 10, 30))
                         .price(new BigDecimal("299.99"))
                         .currency("USD")
-                        .source("test-source")
+                        .type(FlightType.REGULAR)
                         .build()
         );
         assertEquals("destCode cannot be null", exception.getMessage());
@@ -91,7 +91,7 @@ class FlightDtoV1Test {
                         .destCode("LAX")
                         .price(new BigDecimal("299.99"))
                         .currency("USD")
-                        .source("test-source")
+                        .type(FlightType.REGULAR)
                         .build()
         );
         assertEquals("deptDateTime cannot be null", exception.getMessage());
@@ -107,7 +107,7 @@ class FlightDtoV1Test {
                         .destCode("LAX")
                         .deptDateTime(LocalDateTime.of(2026, 1, 15, 10, 30))
                         .currency("USD")
-                        .source("test-source")
+                        .type(FlightType.REGULAR)
                         .build()
         );
         assertEquals("price cannot be null", exception.getMessage());
@@ -123,14 +123,14 @@ class FlightDtoV1Test {
                         .destCode("LAX")
                         .deptDateTime(LocalDateTime.of(2026, 1, 15, 10, 30))
                         .price(new BigDecimal("299.99"))
-                        .source("test-source")
+                        .type(FlightType.REGULAR)
                         .build()
         );
         assertEquals("currency cannot be null", exception.getMessage());
     }
 
     @Test
-    void testFlightDtoV1Builder_MissingSource_ThrowsNullPointerException() {
+    void testFlightDtoV1Builder_MissingType_ThrowsNullPointerException() {
         // When & Then
         NullPointerException exception = assertThrows(NullPointerException.class, () ->
                 FlightDtoV1.builder()
@@ -142,7 +142,7 @@ class FlightDtoV1Test {
                         .currency("USD")
                         .build()
         );
-        assertEquals("source cannot be null", exception.getMessage());
+        assertEquals("type cannot be null", exception.getMessage());
     }
 
     @Test
@@ -155,7 +155,7 @@ class FlightDtoV1Test {
                 .deptDateTime(LocalDateTime.of(2026, 1, 15, 10, 30))
                 .price(new BigDecimal("299.99"))
                 .currency("USD")
-                .source("test-source")
+                .type(FlightType.REGULAR)
                 .build();
 
         // Then
