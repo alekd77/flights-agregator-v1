@@ -21,57 +21,19 @@
 
     <properties>
         <java.version>21</java.version>
-        <!-- keep plugin versions if you want specific plugin versions -->
-        <maven.compiler.plugin.version>3.11.0</maven.compiler.plugin.version>
     </properties>
 
     <modules>
+        <module>flights-common</module>
         <module>flights-api</module>
     </modules>
 
-
     <dependencies>
-
-        <!-- WebMVC -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-webmvc</artifactId>
-        </dependency>
-
-        <!-- Security -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security</artifactId>
-        </dependency>
-
-        <!-- Rest client (WebClient / RestClient abstractions) -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-restclient</artifactId>
-        </dependency>
-
-        <!-- Lombok (annotation processing) -->
+        <!-- Lombok used across all modules -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
-        </dependency>
-
-        <!-- Test starters used across modules -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-webmvc-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-restclient-test</artifactId>
-            <scope>test</scope>
         </dependency>
 
     </dependencies>
@@ -84,22 +46,20 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>${maven.compiler.plugin.version}</version>
+                    <version>3.11.0</version>
                     <configuration>
-                        <!-- Use release to set target and source -->
                         <release>${java.version}</release>
-
-                        <!-- Configure annotation processors (Lombok) -->
                         <annotationProcessorPaths>
                             <path>
                                 <groupId>org.projectlombok</groupId>
                                 <artifactId>lombok</artifactId>
+                                <version>${lombok.version}</version>
                             </path>
                         </annotationProcessorPaths>
                     </configuration>
                 </plugin>
 
-                <!-- Parent can declare spring-boot plugin management; runnable module will enable it -->
+                <!-- Spring Boot plugin management for runnable modules -->
                 <plugin>
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-maven-plugin</artifactId>
