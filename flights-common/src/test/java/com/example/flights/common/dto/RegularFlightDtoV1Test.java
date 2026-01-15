@@ -2,6 +2,7 @@
 
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
@@ -18,7 +19,7 @@ class RegularFlightDtoV1Test {
                 .destCode("DEN")
                 .deptDateTime(LocalDateTime.of(2026, 4, 5, 16, 45))
                 .price(RegularFlightPriceDtoV1.builder()
-                        .amount("350.00")
+                        .amount(new BigDecimal("350.00"))
                         .currency("USD")
                         .build())
                 .duration(Duration.ofHours(12).plusMinutes(45))
@@ -31,7 +32,7 @@ class RegularFlightDtoV1Test {
         assertEquals("DEN", flight.getDestCode());
         assertEquals(LocalDateTime.of(2026, 4, 5, 16, 45), flight.getDeptDateTime());
         assertEquals(Duration.ofHours(12).plusMinutes(45), flight.getDuration());
-        assertEquals("350.00", flight.getPrice().getAmount());
+        assertEquals(new BigDecimal("350.00"), flight.getPrice().getAmount());
         assertEquals("USD", flight.getPrice().getCurrency());
     }
 }
