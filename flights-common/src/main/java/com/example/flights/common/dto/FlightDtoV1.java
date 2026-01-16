@@ -20,19 +20,19 @@ public class FlightDtoV1 {
     private final String currency;
     private final Integer numOfTransfers;
     private final Duration duration;
-    private final String source;
+    private final FlightType type;
 
     public FlightDtoV1(String id, String deptCode, String destCode,
                        LocalDateTime deptDateTime, BigDecimal price,
                        String currency, Integer numOfTransfers,
-                       Duration duration, String source) {
+                       Duration duration, FlightType type) {
         this.id = Objects.requireNonNull(id, "id cannot be null");
         this.deptCode = Objects.requireNonNull(deptCode, "deptCode cannot be null");
         this.destCode = Objects.requireNonNull(destCode, "destCode cannot be null");
         this.deptDateTime = Objects.requireNonNull(deptDateTime, "deptDateTime cannot be null");
         this.price = Objects.requireNonNull(price, "price cannot be null");
         this.currency = Objects.requireNonNull(currency, "currency cannot be null");
-        this.source = Objects.requireNonNull(source, "source cannot be null");
+        this.type = Objects.requireNonNull(type, "type cannot be null");
         this.numOfTransfers = numOfTransfers;
         this.duration = duration;
     }
