@@ -1,6 +1,7 @@
 package com.example.flights.common.dto;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Data;
 import java.math.BigDecimal;
@@ -13,8 +14,8 @@ public class RegularFlightPriceDtoV1 {
 
     @JsonCreator
     public RegularFlightPriceDtoV1(
-            BigDecimal amount,
-            String currency) {
+            @JsonProperty("amount") BigDecimal amount,
+            @JsonProperty("currency") String currency) {
         this.amount = amount;
         this.currency = currency;
     }
