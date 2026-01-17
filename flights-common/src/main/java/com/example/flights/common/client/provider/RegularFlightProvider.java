@@ -1,6 +1,7 @@
 package com.example.flights.common.client.provider;
 
 import com.example.flights.common.client.FlightWebClient;
+import com.example.flights.common.client.provider.dto.RegularFlightDto;
 import com.example.flights.common.client.provider.dto.RegularFlightProviderResponseDto;
 import com.example.flights.common.config.RegularFlightProviderClientConfigProperties;
 import com.example.flights.common.dto.FlightDtoV1;
@@ -13,6 +14,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -55,16 +57,8 @@ public class RegularFlightProvider extends FlightWebClient implements FlightProv
         }
 
         return responseDto.getData().stream()
-                .map(dto -> FlightDtoV1.builder()
-                        .id(dto.getId())
-                        .deptCode(dto.getDeptCode())
-                        .destCode(dto.getDestCode())
-                        .deptDateTime(dto.getDeptDateTime())
-                        .price(dto.getPrice().getAmount())
-                        .currency(dto.getPrice().getCurrency())
-                        .type(FlightType.REGULAR)
-                        .duration(dto.getDuration())
-                        .build())
+                .filter(this::isValidFlightDto)
+                .map(this::mapToFlightDto)
                 .toList();
     }
 
@@ -77,5 +71,44 @@ public class RegularFlightProvider extends FlightWebClient implements FlightProv
                 .queryParam("maxResult", properties.getMaxResult())
                 .build()
                 .toUriString();
+    }
+
+    private boolean isValidFlightDto(RegularFlightDto dto) {
+        List<String> missingFields = new ArrayList<>();
+
+        if (dto.getId() == null) missingFields.add("id");
+        if (dto.getDeptCode() == null) missingFields.add("deptCode");
+        if (dto.getDestCode() == null) missingFields.add("destCode");
+        if (dto.getDeptDateTime() == null) missingFields.add("deptDateTime");
+        if (dto.getDuration() == null) missingFields.add("duration");
+        if (dto.getPrice() == null) {
+            missingFields.add("price");
+        } else {
+            if (dto.getPrice().getAmount() == null) missingFields.add("price.amount");
+            if (dto.getPrice().getCurrency() == null) missingFields.add("price.currency");
+        }
+
+        if (!missingFields.isEmpty()) {
+            log.warn("Skipping invalid flight from {} - missing fields: {} (id: {})",
+                    getProviderName(),
+                    String.join(", ", missingFields),
+                    dto.getId() != null ? dto.getId() : "unknown");
+            return false;
+        }
+
+        return true;
+    }
+
+    private FlightDtoV1 mapToFlightDto(RegularFlightDto dto) {
+        return FlightDtoV1.builder()
+                .id(dto.getId())
+                .deptCode(dto.getDeptCode())
+                .destCode(dto.getDestCode())
+                .deptDateTime(dto.getDeptDateTime())
+                .price(dto.getPrice().getAmount())
+                .currency(dto.getPrice().getCurrency())
+                .type(FlightType.REGULAR)
+                .duration(dto.getDuration())
+                .build();
     }
 }

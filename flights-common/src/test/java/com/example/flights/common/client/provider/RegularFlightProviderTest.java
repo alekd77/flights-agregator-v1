@@ -271,4 +271,142 @@ class RegularFlightProviderTest {
         assertTrue(exception.getMessage().toLowerCase().contains("timeout") ||
                    exception.getMessage().toLowerCase().contains("unexpected"));
     }
+
+    @Test
+    void fetchFlightDetails_shouldSkipInvalidFlightsAndReturnValidOnes_whenSomeFlightsHaveNullPrice() throws Exception {
+        // Given
+        FlightSearchRequestDtoV1 request = FlightSearchRequestDtoV1.builder()
+                .deptCode("JFK")
+                .destCode("LAX")
+                .deptDate(LocalDate.of(2026, 2, 15))
+                .build();
+
+        // Valid flight with price
+        RegularFlightDto validFlight1 = RegularFlightDto.builder()
+                .id("RF001")
+                .deptCode("JFK")
+                .destCode("LAX")
+                .deptDateTime(LocalDateTime.of(2026, 2, 15, 10, 30))
+                .price(RegularFlightPriceDto.builder()
+                        .amount(new BigDecimal("350.00"))
+                        .currency("USD")
+                        .build())
+                .duration(Duration.ofHours(6))
+                .build();
+
+        // Invalid flight with null price
+        RegularFlightDto invalidFlight = RegularFlightDto.builder()
+                .id("RF002")
+                .deptCode("JFK")
+                .destCode("LAX")
+                .deptDateTime(LocalDateTime.of(2026, 2, 15, 12, 0))
+                .price(null)  // null price
+                .duration(Duration.ofHours(5))
+                .build();
+
+        // Another valid flight
+        RegularFlightDto validFlight2 = RegularFlightDto.builder()
+                .id("RF003")
+                .deptCode("JFK")
+                .destCode("LAX")
+                .deptDateTime(LocalDateTime.of(2026, 2, 15, 14, 45))
+                .price(RegularFlightPriceDto.builder()
+                        .amount(new BigDecimal("420.50"))
+                        .currency("USD")
+                        .build())
+                .duration(Duration.ofHours(5).plusMinutes(45))
+                .build();
+
+        RegularFlightProviderResponseDto providerResponse = RegularFlightProviderResponseDto.builder()
+                .data(List.of(validFlight1, invalidFlight, validFlight2))
+                .build();
+
+        mockWebServer.enqueue(new MockResponse()
+                .setBody(objectMapper.writeValueAsString(providerResponse))
+                .addHeader("Content-Type", "application/json"));
+
+        // When
+        List<FlightDtoV1> result = regularFlightProvider.fetchFlightDetails(request);
+
+        // Then
+        assertNotNull(result);
+        assertEquals(2, result.size(), "Should return only 2 valid flights, skipping the invalid one");
+
+        // Verify first valid flight
+        FlightDtoV1 resultFlight1 = result.get(0);
+        assertEquals("RF001", resultFlight1.getId());
+        assertEquals(new BigDecimal("350.00"), resultFlight1.getPrice());
+        assertEquals("USD", resultFlight1.getCurrency());
+
+        // Verify second valid flight
+        FlightDtoV1 resultFlight2 = result.get(1);
+        assertEquals("RF003", resultFlight2.getId());
+        assertEquals(new BigDecimal("420.50"), resultFlight2.getPrice());
+        assertEquals("USD", resultFlight2.getCurrency());
+    }
+
+    @Test
+    void fetchFlightDetails_shouldSkipInvalidFlights_whenSomeFlightsHaveMissingRequiredFields() throws Exception {
+        // Given
+        FlightSearchRequestDtoV1 request = FlightSearchRequestDtoV1.builder()
+                .deptCode("JFK")
+                .destCode("LAX")
+                .deptDate(LocalDate.of(2026, 2, 15))
+                .build();
+
+        // Valid flight
+        RegularFlightDto validFlight = RegularFlightDto.builder()
+                .id("RF001")
+                .deptCode("JFK")
+                .destCode("LAX")
+                .deptDateTime(LocalDateTime.of(2026, 2, 15, 10, 30))
+                .price(RegularFlightPriceDto.builder()
+                        .amount(new BigDecimal("350.00"))
+                        .currency("USD")
+                        .build())
+                .duration(Duration.ofHours(6))
+                .build();
+
+        // Invalid flight with null id
+        RegularFlightDto invalidFlight1 = RegularFlightDto.builder()
+                .id(null)  // null id
+                .deptCode("JFK")
+                .destCode("LAX")
+                .deptDateTime(LocalDateTime.of(2026, 2, 15, 12, 0))
+                .price(RegularFlightPriceDto.builder()
+                        .amount(new BigDecimal("400.00"))
+                        .currency("USD")
+                        .build())
+                .duration(Duration.ofHours(5))
+                .build();
+
+        // Invalid flight with null price amount
+        RegularFlightDto invalidFlight2 = RegularFlightDto.builder()
+                .id("RF003")
+                .deptCode("JFK")
+                .destCode("LAX")
+                .deptDateTime(LocalDateTime.of(2026, 2, 15, 14, 0))
+                .price(RegularFlightPriceDto.builder()
+                        .amount(null)  // null amount
+                        .currency("USD")
+                        .build())
+                .duration(Duration.ofHours(5))
+                .build();
+
+        RegularFlightProviderResponseDto providerResponse = RegularFlightProviderResponseDto.builder()
+                .data(List.of(validFlight, invalidFlight1, invalidFlight2))
+                .build();
+
+        mockWebServer.enqueue(new MockResponse()
+                .setBody(objectMapper.writeValueAsString(providerResponse))
+                .addHeader("Content-Type", "application/json"));
+
+        // When
+        List<FlightDtoV1> result = regularFlightProvider.fetchFlightDetails(request);
+
+        // Then
+        assertNotNull(result);
+        assertEquals(1, result.size(), "Should return only 1 valid flight, skipping the 2 invalid ones");
+        assertEquals("RF001", result.get(0).getId());
+    }
 }
