@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class FlightDtoV1Test {
 
     @Test
-    void testFlightDtoV1Builder() {
+    void flightDtoV1Builder_shouldCreateValidFlightDto_whenAllRequiredFieldsProvided() {
         // When
         FlightDtoV1 flight = FlightDtoV1.builder()
                 .id("FL123")
@@ -34,7 +34,7 @@ class FlightDtoV1Test {
     }
 
     @Test
-    void testFlightDtoV1Builder_MissingId_ThrowsNullPointerException() {
+    void flightDtoV1Builder_shouldThrowNullPointerException_whenIdMissing() {
         // When & Then
         NullPointerException exception = assertThrows(NullPointerException.class, () ->
                 FlightDtoV1.builder()
@@ -50,7 +50,7 @@ class FlightDtoV1Test {
     }
 
     @Test
-    void testFlightDtoV1Builder_MissingDeptCode_ThrowsNullPointerException() {
+    void flightDtoV1Builder_shouldThrowNullPointerException_whenDeptCodeMissing() {
         // When & Then
         NullPointerException exception = assertThrows(NullPointerException.class, () ->
                 FlightDtoV1.builder()
@@ -66,7 +66,7 @@ class FlightDtoV1Test {
     }
 
     @Test
-    void testFlightDtoV1Builder_MissingDestCode_ThrowsNullPointerException() {
+    void flightDtoV1Builder_shouldThrowNullPointerException_whenDestCodeMissing() {
         // When & Then
         NullPointerException exception = assertThrows(NullPointerException.class, () ->
                 FlightDtoV1.builder()
@@ -82,7 +82,7 @@ class FlightDtoV1Test {
     }
 
     @Test
-    void testFlightDtoV1Builder_MissingDeptDateTime_ThrowsNullPointerException() {
+    void flightDtoV1Builder_shouldThrowNullPointerException_whenDeptDateTimeMissing() {
         // When & Then
         NullPointerException exception = assertThrows(NullPointerException.class, () ->
                 FlightDtoV1.builder()
@@ -98,7 +98,7 @@ class FlightDtoV1Test {
     }
 
     @Test
-    void testFlightDtoV1Builder_MissingPrice_ThrowsNullPointerException() {
+    void flightDtoV1Builder_shouldThrowNullPointerException_whenPriceMissing() {
         // When & Then
         NullPointerException exception = assertThrows(NullPointerException.class, () ->
                 FlightDtoV1.builder()
@@ -114,7 +114,7 @@ class FlightDtoV1Test {
     }
 
     @Test
-    void testFlightDtoV1Builder_MissingCurrency_ThrowsNullPointerException() {
+    void flightDtoV1Builder_shouldThrowNullPointerException_whenCurrencyMissing() {
         // When & Then
         NullPointerException exception = assertThrows(NullPointerException.class, () ->
                 FlightDtoV1.builder()
@@ -130,7 +130,7 @@ class FlightDtoV1Test {
     }
 
     @Test
-    void testFlightDtoV1Builder_MissingType_ThrowsNullPointerException() {
+    void flightDtoV1Builder_shouldThrowNullPointerException_whenTypeMissing() {
         // When & Then
         NullPointerException exception = assertThrows(NullPointerException.class, () ->
                 FlightDtoV1.builder()
@@ -146,7 +146,7 @@ class FlightDtoV1Test {
     }
 
     @Test
-    void testGetSignatureTruncatesSeconds() {
+    void getSignature_shouldTruncateSeconds_whenCalled() {
         // When
         FlightDtoV1 flight = FlightDtoV1.builder()
                 .id("FL123")
